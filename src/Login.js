@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import { auth } from './firebase';
 
+
 function Login() {
+  const history = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -22,6 +24,9 @@ function Login() {
       .then((auth) => {
         // it successfully created a new user with email and password
         console.log(auth);
+        if (auth) {
+          history('/')
+        }
       })
       .catch(error => alert(error.message))
   }
@@ -45,7 +50,7 @@ function Login() {
           <h5>Password</h5>
           <input type='password' value={password} onChange={e => setPassword(e.target.value)} />
 
-          <button type='submit' onclick={signIn} className='login__signInButton'>Sign In</button>
+          <button type='submit' onClick={signIn} className='login__signInButton'>Sign In</button>
         </form>
 
         <p>
