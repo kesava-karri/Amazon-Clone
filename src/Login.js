@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import { auth } from './firebase';
@@ -13,6 +13,12 @@ function Login() {
     e.preventDefault(); // No refresh
 
     // firebase login
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then(auth => {
+        history('/')
+      })
+      .catch(error => alert(error.message))
   }
 
   const register = e => {
@@ -23,7 +29,7 @@ function Login() {
       .createUserWithEmailAndPassword(email, password)
       .then((auth) => {
         // it successfully created a new user with email and password
-        console.log(auth);
+        // console.log(auth);
         if (auth) {
           history('/')
         }
