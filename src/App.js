@@ -43,7 +43,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/checkout" element={[<Header />, <Checkout />]} />
-          <Route path="/payment" element={[<Header />, <h3>Payment page</h3>, <Payment />]} />
+          <Route path="/payment" element={[<Header />, <Payment />]} />
           <Route path="/" element={[<Header />, <Home />]} />
         </Routes>
       </div>
