@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Payment.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CheckoutProduct from "./CheckoutProduct";
 import { useStateValue } from "./StateProvider";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-number-format";
 import { getBasketTotal } from "./reducer";
+import axios from "./axios";
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
+  const history = useNavigate();
 
   const stripe = useStripe();
   const elements = useElements();
@@ -17,9 +19,42 @@ function Payment() {
   const [processing, setProcessing] = useState("");
   const [error, setError] = useState(null);
   const [disabled, setDisabled] = useState(true);
+  const [clientSecret, setClientSecret] = useState(true);
+  
+  useEffect(() => {
+    // generate the special stripe secret which allows us to charge the customer
+    const getClientSecret = async () => {
+      const response = await axios({
+        method: 'post',
+        // Stripe expects the total in subunits or basic units (cents in case of USD), so we multiply with 100
+        url: `/payments/create?total=${getBasketTotal(basket) * 100}`
+      });
+      setClientSecret(response.data.clientSecret)
+    }
 
-  const handleSubmit = e => {
+    getClientSecret();
+  }, [basket])
+
+  console.log('THE SECRET IS >>>', clientSecret)
+
+  const handleSubmit = async (event) => {
     // do the stripe stuff
+    event.preventDefault();
+    setProcessing(true); // Once submitted (i.e., buy now button is pressed, the button gets disabled to prevent user from clicking it more than once)
+
+    const payload = await stripe.confirmCardPayment(clientSecret, {
+      payment_methd: {
+        card: elements.getElement(CardElement)
+      }
+    }).then(({ paymentIntent }) => {
+      // paymentIntent is nothing but payment confirmation
+
+      setSucceeded(true);
+      setError(null)
+      setProcessing(false)
+
+      history('/orders')
+    })
   }
 
   const handleChange = event => {
