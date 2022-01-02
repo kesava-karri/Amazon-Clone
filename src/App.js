@@ -10,8 +10,9 @@ import { useStateValue } from "./StateProvider";
 import Payment from "./Payment";
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import Orders from "./Orders";
 
-const promise = loadStripe('pk_test_51KCZNFCeaw2FkqOCBw9tkvXxe1CzDqe3t4E9pgG4Ap26hbw2z2F3ZFDdvp9EJu3Ybsx2WEGWBDoIOBVDPUVrRied00j0z9UVhN');
+const promise = loadStripe('pk_test_51KCZNFCeaw2FkqOCBw9tkvXxe1CzDqe3t4E9pgG4Ap26hbw2z2F3ZFDdvp9EJu3Ybsx2WEGWBDoIOBVDPUVrRied00j0z9UVhN'); // Publishable key of stripe goes here
 
 function App() {
   // App component
@@ -22,7 +23,7 @@ function App() {
     // only runs once when app component loads as the [] is empty
 
     auth.onAuthStateChanged(authUser => {
-      console.log('THE USER IS >>> ', authUser);
+      // console.log('THE USER IS >>> ', authUser);
 
       if(authUser) {
         // the user logged in
@@ -50,11 +51,12 @@ function App() {
           <Route path="/payment"
             element={[
               <Header />,
-              <Elements stripe={promise}> 
+            <Elements stripe={promise}> 
                 <Payment /> 
               </Elements>
             ]}
           />
+          <Route path="/orders" element={[<Header />, <Orders />]} />
           <Route path="/" element={[<Header />, <Home />]} />
         </Routes>
       </div>
