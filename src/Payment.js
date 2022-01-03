@@ -43,13 +43,11 @@ function Payment() {
     event.preventDefault();
     setProcessing(true); // Once submitted (i.e., buy now button is pressed, the button gets disabled to prevent user from clicking it more than once)
 
-    const payload = await stripe
-      .confirmCardPayment(clientSecret, {
+    const payload = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
         }
-      })
-      .then(({ paymentIntent }) => {
+    }).then(({ paymentIntent }) => {
         // paymentIntent is nothing but payment confirmation
 
         db
